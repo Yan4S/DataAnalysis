@@ -3,6 +3,22 @@ __pycache__/
 *.py[codz]
 *$py.class
 
+# Data files
+*.csv
+*.pkl
+*.jpg
+*.png
+
+# Python
+__pycache__/
+*.pyc
+
+# Jupyter
+.ipynb_checkpoints/
+
+# System
+.DS_Store
+
 # C extensions
 *.so
 
