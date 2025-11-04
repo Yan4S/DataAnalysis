@@ -1,0 +1,41 @@
+# List files
+ls -alh                  # Detailed list with human-readable sizes
+ls -la                   # Show all files (including hidden)
+
+# Create directories
+mkdir folder_name        # Create single directory
+mkdir -p path/to/folder  # Create nested directories
+
+# Copy/Move
+cp file1.txt file2.txt   # Copy file
+cp -r dir1 dir2          # Copy directory recursively
+mv old.txt new.txt       # Rename file
+mv file.txt dir/         # Move file to directory
+
+# Viewing files
+cat file.txt             # Display entire file
+head -10 file.csv        # Show first 10 lines
+less file.txt           # Page through file (q to quit)
+
+
+# Search \& Patterns
+grep "pattern" file.txt           # Search for text
+grep -i "error" log.txt          # Case-insensitive search
+grep -r "TODO" /path/            # Recursive search
+grep "^Name" data.csv            # Lines starting with "Name"
+grep "[0-9]" file.txt            # Lines containing numbers
+
+# Git Operations
+git clone https://github.com/user/repo.git   # Clone repository
+git pull origin main                         # Pull latest changes
+git add .                                    # Stage all changes
+git commit -m "message"                     # Commit changes
+git push origin main                        # Push to remote
+
+
+# System \& Permissions
+pwd                         # Show current directory
+chmod +x script.sh          # Make file executable
+rm file.txt                # Remove file
+rm -rf directory/          # Remove directory recursively
+
