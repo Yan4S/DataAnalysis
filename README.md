@@ -6,6 +6,7 @@
 
 # Check my dir
 import os
+
 os.getcwd()
 
 !ls DataAnalysis
