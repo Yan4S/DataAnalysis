@@ -22,3 +22,8 @@ Model Evaluation & Diagnostics
 
 Presentation & Visualization
 * Create clear, insightful plots and a concise summary of your findings. Tell a story with the data.
+
+
+## VERY IMPORTANT
+
+fit_transform(X_train), NEVER fit(X_test), **only transform**(X_test)
