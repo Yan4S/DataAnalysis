@@ -19,7 +19,7 @@ class FeatureTypeAnalyzer:
         # Analyze numeric columns that might actually be categorical
         numeric_cols = X.select_dtypes(include=['number']).columns
         for col in numeric_cols:
-            reasons = self. (X, col)
+            reasons = self._analyze_numeric_suspicious(X, col)
             if reasons:
                 self.suspicious_features['numeric_that_should_be_categorical'].append({
                     'column': col,
