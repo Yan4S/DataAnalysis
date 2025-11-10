@@ -577,6 +577,9 @@ class DataPlotter:
             display(HTML("<p>No numeric features for target analysis</p>"))
             return
         
+        # Create output widget FIRST
+        output = widgets.Output()
+        
         # Controls
         n_features = widgets.Dropdown(
             options=[5, 10, 15, 20],
@@ -593,7 +596,6 @@ class DataPlotter:
         )
         
         update_btn = widgets.Button(description='Update Analysis', button_style='primary')
-        output = widgets.Output()
         
         def on_update_clicked(b):
             with output:
@@ -602,13 +604,13 @@ class DataPlotter:
         
         update_btn.on_click(on_update_clicked)
         
-        # Display controls
+        # Display everything
         display(HTML("<h3>Target Relationship Analysis</h3>"))
         display(widgets.HBox([n_features, plot_type]))
         display(update_btn)
         display(output)
         
-        # Initial plot
+        # Trigger initial plot
         on_update_clicked(None)
 
     
