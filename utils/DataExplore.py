@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import ipywidgets as widgets
 
+
 def typeConversion(_df, convert_to_cat, convert_to_num):
     df = _df.copy()
     
@@ -201,15 +202,6 @@ class FeatureTypeAnalyzer:
             recommendations['convert_to_numeric'].append(feature['column'])
         
         return recommendations
-
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-from typing import List, Optional
-import numpy as np
-from IPython.display import display, HTML
-import ipywidgets as widgets
-from IPython.display import clear_output
 
 class DataPlotter:
     def __init__(self, figsize: tuple = (10, 6)):
