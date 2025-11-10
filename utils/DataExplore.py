@@ -401,7 +401,7 @@ class DataPlotter:
         # Initial plot
         with output:
             self._plot_categorical_features(X, max_categories.value, columns_per_row.value)
-         on_update_clicked(None)
+        on_update_clicked(None)
     
     def _plot_categorical_features(self, X: pd.DataFrame, max_cats: int, ncols: int):
         """Plot categorical features"""
@@ -530,7 +530,7 @@ class DataPlotter:
         with output:
             n_feats = len(numeric_cols) if n_features.value == 'All' else n_features.value
             self._plot_correlation_heatmap(X, n_feats, correlation_type.value.lower(), threshold.value)
-         on_update_clicked(None)
+        on_update_clicked(None)
     
     def _plot_correlation_heatmap(self, X: pd.DataFrame, n_features: int, method: str, threshold: float):
         """Plot correlation heatmap for top features"""
@@ -611,7 +611,7 @@ class DataPlotter:
         # Initial plot
         with output:
             self._plot_target_relationships(X, y, n_features.value, plot_type.value)
-         on_update_clicked(None)
+        on_update_clicked(None)
     
     def _plot_target_relationships(self, X: pd.DataFrame, y: pd.Series, n_features: int, plot_type: str):
         """Plot relationships between features and target"""
