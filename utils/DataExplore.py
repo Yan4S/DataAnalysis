@@ -586,7 +586,7 @@ class DataPlotter:
         )
         
         plot_type = widgets.Dropdown(
-            options=['Scatter', 'Boxplot', 'Violin', 'Stripplot'],
+            options=['Scatter', 'Boxplot', 'Boxen', 'Violin', 'Stripplot'],
             value='Scatter',
             description='Plot Type:',
             style={'description_width': 'initial'}
@@ -609,9 +609,8 @@ class DataPlotter:
         display(output)
         
         # Initial plot
-        with output:
-            self._plot_target_relationships(X, y, n_features.value, plot_type.value)
         on_update_clicked(None)
+
     
     def _plot_target_relationships(self, X: pd.DataFrame, y: pd.Series, n_features: int, plot_type: str):
         """Plot relationships between features and target"""
@@ -635,7 +634,7 @@ class DataPlotter:
                     ax.scatter(X[col], y, alpha=0.5, s=20)
                     ax.set_xlabel(col)
                     ax.set_ylabel('Target')
-                elif plot_type in ['Boxplot', 'Violin', 'Stripplot']:
+                elif plot_type in ['Boxplot', 'Boxen', 'Violin', 'Stripplot']:
                     plot_data = pd.DataFrame({col: X[col], 'Target': y})
                     if pd.api.types.is_numeric_dtype(y) and y.nunique() > 10:
                         # Bin target for categorical plots
@@ -646,6 +645,8 @@ class DataPlotter:
                     
                     if plot_type == 'Boxplot':
                         sns.boxplot(data=plot_data, x=x_var, y=col, ax=ax)
+                    elif plot_type == 'Boxen':
+                        sns.boxenplot(data=plot_data, x=x_var, y=col, ax=ax)
                     elif plot_type == 'Violin':
                         sns.violinplot(data=plot_data, x=x_var, y=col, ax=ax)
                     elif plot_type == 'Stripplot':
