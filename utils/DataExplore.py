@@ -317,7 +317,7 @@ class DataPlotter:
         # Display controls
         display(HTML("<h3>Numeric Features Analysis</h3>"))
         display(widgets.HBox([plot_type, columns_per_row]))
-        display(update_btn)
+        display(update_num_btn)
         display(output)
         
         # Initial plot
@@ -395,7 +395,7 @@ class DataPlotter:
         # Display controls
         display(HTML("<h3>Categorical Features Analysis</h3>"))
         display(widgets.HBox([max_categories, columns_per_row]))
-        display(update_btn)
+        display(update_cat_btn)
         display(output)
         
         # Initial plot
@@ -523,7 +523,7 @@ class DataPlotter:
         # Display controls
         display(HTML("<h3>Feature Correlation Analysis</h3>"))
         display(widgets.HBox([n_features, correlation_type, threshold]))
-        display(update_btn)
+        display(update_corr_btn)
         display(output)
         
         # Initial plot
@@ -607,7 +607,7 @@ class DataPlotter:
         # Display everything
         display(HTML("<h3>Target Relationship Analysis</h3>"))
         display(widgets.HBox([n_features, plot_type]))
-        display(update_btn)
+        display(update_tgt_btn)
         display(output)
         
         # Trigger initial plot
