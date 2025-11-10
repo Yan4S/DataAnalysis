@@ -304,7 +304,7 @@ class DataPlotter:
             style={'description_width': 'initial'}
         )
         
-        update_btn = widgets.Button(description='Update Plot', button_style='primary')
+        update_num_btn = widgets.Button(description='Update Plot', button_style='primary')
         output = widgets.Output()
         
         def on_update_clicked(b):
@@ -312,7 +312,7 @@ class DataPlotter:
                 clear_output(wait=True)
                 self._plot_numeric_features(X, plot_type.value, columns_per_row.value)
         
-        update_btn.on_click(on_update_clicked)
+        update_num_btn.on_click(on_update_clicked)
         
         # Display controls
         display(HTML("<h3>Numeric Features Analysis</h3>"))
@@ -382,7 +382,7 @@ class DataPlotter:
             style={'description_width': 'initial'}
         )
         
-        update_btn = widgets.Button(description='Update Plot', button_style='primary')
+        update_cat_btn = widgets.Button(description='Update Plot', button_style='primary')
         output = widgets.Output()
         
         def on_update_clicked(b):
@@ -390,7 +390,7 @@ class DataPlotter:
                 clear_output(wait=True)
                 self._plot_categorical_features(X, max_categories.value, columns_per_row.value)
         
-        update_btn.on_click(on_update_clicked)
+        update_cat_btn.on_click(on_update_clicked)
         
         # Display controls
         display(HTML("<h3>Categorical Features Analysis</h3>"))
@@ -508,7 +508,7 @@ class DataPlotter:
             style={'description_width': 'initial'}
         )
         
-        update_btn = widgets.Button(description='Update Heatmap', button_style='primary')
+        update_corr_btn = widgets.Button(description='Update Heatmap', button_style='primary')
         output = widgets.Output()
         
         def on_update_clicked(b):
@@ -518,7 +518,7 @@ class DataPlotter:
                 method = correlation_type.value.lower()
                 self._plot_correlation_heatmap(X, n_feats, method, threshold.value)
         
-        update_btn.on_click(on_update_clicked)
+        update_corr_btn.on_click(on_update_clicked)
         
         # Display controls
         display(HTML("<h3>Feature Correlation Analysis</h3>"))
@@ -595,14 +595,14 @@ class DataPlotter:
             style={'description_width': 'initial'}
         )
         
-        update_btn = widgets.Button(description='Update Analysis', button_style='primary')
+        update_tgt_btn = widgets.Button(description='Update Analysis', button_style='primary')
         
         def on_update_clicked(b):
             with output:
                 clear_output(wait=True)
                 self._plot_target_relationships(X, y, n_features.value, plot_type.value)
         
-        update_btn.on_click(on_update_clicked)
+        update_tgt_btn.on_click(on_update_clicked)
         
         # Display everything
         display(HTML("<h3>Target Relationship Analysis</h3>"))
