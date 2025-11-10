@@ -308,8 +308,8 @@ class DataPlotter:
         )
         
         columns_per_row = widgets.Dropdown(
-            options=[2, 3, 4, 5],
-            value=3,
+            options=[3, 4, 5, 6],
+            value=5,
             description='Columns per Row:',
             style={'description_width': 'initial'}
         )
@@ -380,14 +380,14 @@ class DataPlotter:
         # Controls
         max_categories = widgets.Dropdown(
             options=[5, 10, 15, 20, 25],
-            value=10,
+            value=15,
             description='Max Categories:',
             style={'description_width': 'initial'}
         )
         
         columns_per_row = widgets.Dropdown(
-            options=[2, 3, 4],
-            value=2,
+            options=[3, 4, 5, 6],
+            value=5,
             description='Columns per Row:',
             style={'description_width': 'initial'}
         )
