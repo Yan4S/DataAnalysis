@@ -5,6 +5,11 @@ from IPython.display import display, HTML, clear_output
 import matplotlib.pyplot as plt
 import seaborn as sns
 import ipywidgets as widgets
+import logging
+import warnings
+
+logging.basicConfig(level=logging.INFO, format='%(message)s')
+warnings.filterwarnings('ignore')
 
 
 def typeConversion(_df, convert_to_cat, convert_to_num):
@@ -203,154 +208,85 @@ class FeatureTypeAnalyzer:
         
         return recommendations
 
-class DataPlotter:
+
+
+class SimpleDataPlotter:
+    """
+    Simple plotting class - you control all parameters directly
+    """
+    
     def __init__(self, figsize: tuple = (10, 6)):
         self.figsize = figsize
         plt.style.use('default')
+        
+        logging.info("SIMPLE DATA PLOTTER INITIALIZED")
+        logging.info("=" * 50)
+        logging.info("USAGE EXAMPLES:")
+        logging.info("=" * 50)
+        
+        logging.info("\n1. Plot numeric features:")
+        logging.info("   plotter.plot_numeric_features(X, plot_type='histogram', ncols=3)")
+        logging.info("   plotter.plot_numeric_features(X, plot_type='boxplot', col_names=['age', 'income'])")
+        
+        logging.info("\n2. Plot categorical features:")
+        logging.info("   plotter.plot_categorical_features(X, max_categories=10, ncols=2)")
+        logging.info("   plotter.plot_categorical_features(X, col_names=['category', 'city'])")
+        
+        logging.info("\n3. Plot missing values:")
+        logging.info("   plotter.plot_missing_values(X)")
+        logging.info("   plotter.plot_missing_values(X, col_names=['col1', 'col2', 'col3'])")
+        
+        logging.info("\n4. Plot correlations:")
+        logging.info("   plotter.plot_correlations(X, n_features=10, method='pearson')")
+        logging.info("   plotter.plot_correlations(X, n_features='all', threshold=0.8)")
+        
+        logging.info("\n5. Plot target relationships:")
+        logging.info("   plotter.plot_target_relationships(X, y, plot_type='scatter')")
+        logging.info("   plotter.plot_target_relationships(X, y, n_features=5, col_names=['feat1', 'feat2'])")
+        
+        logging.info("\n" + "=" * 50)
+        logging.info("TIP: Call any plotting function to see its specific options!")
+        logging.info("=" * 50)
     
-    def _create_tabs(self, titles):
-        """Create collapsible tabs for organized output"""
-        tab_titles = titles
-        children = [widgets.Output() for _ in tab_titles]
-        tab = widgets.Tab(children=children)
-        for i, title in enumerate(tab_titles):
-            tab.set_title(i, title)
-        return tab, children
-    
-    
-    def interactive_eda(self, X: pd.DataFrame, y: Optional[pd.Series] = None):
-        """
-        Interactive EDA with controls for each visualization type
-        """
-        # Create main tabs
-        tab_titles = ['Overview', 'Numeric Features', 'Categorical Features', 
-                     'Missing Data', 'Correlations', 'Target Analysis']
-        tab, outputs = self._create_tabs(tab_titles)
-        display(tab)
+    def plot_numeric_features(self, X: pd.DataFrame, plot_type: str = 'histogram', ncols: int = 3, col_names: Optional[List[str]] = None):
+        """Plot numeric features with specified type"""
+        logging.info("NUMERIC FEATURES PLOT OPTIONS:")
+        logging.info("plot_type: 'histogram', 'boxplot', 'density', 'violin'")
+        logging.info("ncols: 2-4 (suggested: 3)")
+        logging.info("col_names: list of column names or None for all numeric columns")
+        logging.info(f"Your choice: plot_type='{plot_type}', ncols={ncols}, col_names={col_names}")
         
-        # Tab 1: Overview
-        with outputs[0]:
-            clear_output()
-            self._show_overview(X, y)
-        
-        # Tab 2: Numeric Features with controls
-        with outputs[1]:
-            clear_output(wait=True)
-            self._setup_numeric_controls(X)
-        
-        # Tab 3: Categorical Features with controls  
-        with outputs[2]:
-            clear_output(wait=True)
-            self._setup_categorical_controls(X)
-        
-        # Tab 4: Missing Data
-        with outputs[3]:
-            clear_output()
-            self.plot_missing_values(X)
-        
-        # Tab 5: Correlations with controls
-        with outputs[4]:
-            clear_output(wait=True)
-            self._setup_correlation_controls(X)
-        
-        # Tab 6: Target Analysis with controls
-        with outputs[5]:
-            clear_output(wait=True)
-            if y is not None:
-                self._setup_target_controls(X, y)
-            else:
-                display(HTML("<p>No target variable provided for analysis</p>"))
-    
-    def _show_overview(self, X: pd.DataFrame, y: Optional[pd.Series] = None):
-        """Show dataframe overview"""
-        overview_html = f"""
-        <div style="font-family: Arial; font-size: 14px;">
-            <h3>Dataset Overview</h3>
-            <p><b>Shape:</b> {X.shape[0]:,} rows × {X.shape[1]:,} columns</p>
-            <p><b>Numeric Features:</b> {len(X.select_dtypes(include='number').columns)}</p>
-            <p><b>Categorical Features:</b> {len(X.select_dtypes(include=['object', 'category']).columns)}</p>
-            <p><b>Memory Usage:</b> {X.memory_usage(deep=True).sum() / 1024**2:.1f} MB</p>
-        """
-        if y is not None:
-            target_info = f"""
-            <p><b>Target Variable:</b> {y.name if hasattr(y, 'name') else 'Target'}</p>
-            <p><b>Target Type:</b> {'Numeric' if pd.api.types.is_numeric_dtype(y) else 'Categorical'}</p>
-            <p><b>Unique Values:</b> {y.nunique()}</p>
-            """
-            overview_html += target_info
-        overview_html += "</div>"
-        display(HTML(overview_html))
-    
-    def _setup_numeric_controls(self, X: pd.DataFrame):
-        """Setup interactive controls for numeric features"""
-        numeric_cols = X.select_dtypes(include=['number']).columns.tolist()
+        if col_names is None:
+            numeric_cols = X.select_dtypes(include=['number']).columns.tolist()
+        else:
+            numeric_cols = [col for col in col_names if col in X.columns and pd.api.types.is_numeric_dtype(X[col])]
         
         if not numeric_cols:
-            display(HTML("<p>No numeric columns found</p>"))
+            logging.info("No numeric columns found")
             return
         
-        # Controls
-        plot_type = widgets.Dropdown(
-            options=['Histogram', 'Boxplot', 'Density', 'Violin'],
-            value='Histogram',
-            description='Plot Type:',
-            style={'description_width': 'initial'}
-        )
-        
-        columns_per_row = widgets.Dropdown(
-            options=[3, 4, 5, 6],
-            value=5,
-            description='Columns per Row:',
-            style={'description_width': 'initial'}
-        )
-        
-        update_num_btn = widgets.Button(description='Update Plot', button_style='primary')
-        output = widgets.Output()
-        
-        def on_update_clicked(b):
-            with output:
-                clear_output(wait=True)
-                self._plot_numeric_features(X, plot_type.value, columns_per_row.value)
-        
-        update_num_btn.on_click(on_update_clicked)
-        
-        # Display controls
-        display(HTML("<h3>Numeric Features Analysis</h3>"))
-        display(widgets.HBox([plot_type, columns_per_row]))
-        display(update_num_btn)
-        display(output)
-        
-        # Initial plot
-        with output:
-            self._plot_numeric_features(X, plot_type.value, columns_per_row.value)
-    
-    def _plot_numeric_features(self, X: pd.DataFrame, plot_type: str, ncols: int):
-        """Plot numeric features based on selected type"""
-        numeric_cols = X.select_dtypes(include=['number']).columns.tolist()
         n_features = len(numeric_cols)
         nrows = (n_features + ncols - 1) // ncols
         
-        fig, axes = plt.subplots(nrows, ncols, figsize=(ncols * 4, nrows * 3.5))
+        fig, axes = plt.subplots(nrows, ncols, figsize=(ncols * 4, nrows * 3))
         axes_flat = axes.flatten() if nrows * ncols > 1 else [axes]
         
         for i, col in enumerate(numeric_cols):
             if i < len(axes_flat):
                 ax = axes_flat[i]
                 
-                if plot_type == 'Histogram':
+                if plot_type == 'histogram':
                     sns.histplot(data=X, x=col, ax=ax, kde=True)
-                    ax.set_title(f'{col}\n(μ={X[col].mean():.2f}, σ={X[col].std():.2f})')
-                elif plot_type == 'Boxplot':
+                    ax.set_title(f'{col}')
+                elif plot_type == 'boxplot':
                     sns.boxplot(data=X, y=col, ax=ax)
                     ax.set_title(f'{col}')
-                elif plot_type == 'Density':
+                elif plot_type == 'density':
                     sns.kdeplot(data=X, x=col, ax=ax, fill=True)
                     ax.set_title(f'{col}')
-                elif plot_type == 'Violin':
+                elif plot_type == 'violin':
                     sns.violinplot(data=X, y=col, ax=ax)
                     ax.set_title(f'{col}')
-                
-                ax.tick_params(labelsize=9)
         
         # Hide empty subplots
         for i in range(len(numeric_cols), len(axes_flat)):
@@ -359,75 +295,38 @@ class DataPlotter:
         plt.tight_layout()
         plt.show()
     
-    def _setup_categorical_controls(self, X: pd.DataFrame):
-        """Setup interactive controls for categorical features"""
-        categorical_cols = X.select_dtypes(include=['object', 'category']).columns.tolist()
+    def plot_categorical_features(self, X: pd.DataFrame, max_categories: int = 10, ncols: int = 2, col_names: Optional[List[str]] = None):
+        """Plot categorical features"""
+        logging.info("CATEGORICAL FEATURES PLOT OPTIONS:")
+        logging.info("max_categories: 5-20 (suggested: 10)")
+        logging.info("ncols: 2-3 (suggested: 2)")
+        logging.info("col_names: list of column names or None for all categorical columns")
+        logging.info(f"Your choice: max_categories={max_categories}, ncols={ncols}, col_names={col_names}")
+        
+        if col_names is None:
+            categorical_cols = X.select_dtypes(include=['object', 'category']).columns.tolist()
+        else:
+            categorical_cols = [col for col in col_names if col in X.columns and not pd.api.types.is_numeric_dtype(X[col])]
         
         if not categorical_cols:
-            display(HTML("<p>No categorical columns found</p>"))
+            logging.info("No categorical columns found")
             return
         
-        # Controls
-        max_categories = widgets.Dropdown(
-            options=[5, 10, 15, 20, 25],
-            value=15,
-            description='Max Categories:',
-            style={'description_width': 'initial'}
-        )
-        
-        columns_per_row = widgets.Dropdown(
-            options=[3, 4, 5, 6],
-            value=5,
-            description='Columns per Row:',
-            style={'description_width': 'initial'}
-        )
-        
-        update_cat_btn = widgets.Button(description='Update Plot', button_style='primary')
-        output = widgets.Output()
-        
-        def on_update_clicked(b):
-            with output:
-                clear_output(wait=True)
-                self._plot_categorical_features(X, max_categories.value, columns_per_row.value)
-        
-        update_cat_btn.on_click(on_update_clicked)
-        
-        # Display controls
-        display(HTML("<h3>Categorical Features Analysis</h3>"))
-        display(widgets.HBox([max_categories, columns_per_row]))
-        display(update_cat_btn)
-        display(output)
-        
-        # Initial plot
-        with output:
-            self._plot_categorical_features(X, max_categories.value, columns_per_row.value)
-        on_update_clicked(None)
-    
-    def _plot_categorical_features(self, X: pd.DataFrame, max_cats: int, ncols: int):
-        """Plot categorical features"""
-        categorical_cols = X.select_dtypes(exclude=np.number).columns.tolist()
         n_features = len(categorical_cols)
         nrows = (n_features + ncols - 1) // ncols
         
-        fig, axes = plt.subplots(nrows, ncols, figsize=(ncols * 5, nrows * 4))
+        fig, axes = plt.subplots(nrows, ncols, figsize=(ncols * 6, nrows * 4))
         axes_flat = axes.flatten() if nrows * ncols > 1 else [axes]
         
         for i, col in enumerate(categorical_cols):
             if i < len(axes_flat):
                 ax = axes_flat[i]
-                value_counts = X[col].value_counts().head(max_cats)
+                value_counts = X[col].value_counts().head(max_categories)
                 
-                bars = ax.bar(range(len(value_counts)), value_counts.values, 
-                            color='lightcoral', alpha=0.7)
-                ax.set_title(f'{col}\n({X[col].nunique()} unique)', fontsize=12)
+                bars = ax.bar(range(len(value_counts)), value_counts.values, color='lightcoral', alpha=0.7)
+                ax.set_title(f'{col}\n({X[col].nunique()} unique)')
                 ax.set_xticks(range(len(value_counts)))
-                ax.set_xticklabels(value_counts.index, rotation=45, ha='right', fontsize=9)
-                
-                # Add value labels on bars
-                for bar, count in zip(bars, value_counts.values):
-                    height = bar.get_height()
-                    ax.text(bar.get_x() + bar.get_width()/2., height,
-                           f'{count}', ha='center', va='bottom', fontsize=9)
+                ax.set_xticklabels(value_counts.index, rotation=45, ha='right')
         
         # Hide empty subplots
         for i in range(len(categorical_cols), len(axes_flat)):
@@ -436,10 +335,19 @@ class DataPlotter:
         plt.tight_layout()
         plt.show()
     
-    def plot_missing_values(self, X: pd.DataFrame):
-        """Missing values visualization"""
-        missing_count = X.isnull().sum()
-        missing_pct = (missing_count / len(X)) * 100
+    def plot_missing_values(self, X: pd.DataFrame, col_names: Optional[List[str]] = None):
+        """Plot missing values"""
+        logging.info("MISSING VALUES PLOT:")
+        logging.info("col_names: list of column names or None for all columns")
+        logging.info(f"Your choice: col_names={col_names}")
+        
+        if col_names is None:
+            data_to_plot = X
+        else:
+            data_to_plot = X[col_names]
+        
+        missing_count = data_to_plot.isnull().sum()
+        missing_pct = (missing_count / len(data_to_plot)) * 100
         missing_data = pd.DataFrame({
             'Column': missing_count.index,
             'Missing_Count': missing_count.values,
@@ -448,215 +356,102 @@ class DataPlotter:
         missing_data = missing_data[missing_data['Missing_Count'] > 0]
         
         if missing_data.empty:
-            display(HTML("<p>No missing values found</p>"))
+            logging.info("No missing values found")
             return
         
         fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
         
         # Count plot
-        bars1 = ax1.barh(missing_data['Column'], missing_data['Missing_Count'], color='salmon')
-        ax1.set_title('Missing Values Count', fontsize=14)
-        ax1.set_xlabel('Number of Missing Values')
+        ax1.barh(missing_data['Column'], missing_data['Missing_Count'], color='salmon')
+        ax1.set_title('Missing Values Count')
         
         # Percentage plot
-        bars2 = ax2.barh(missing_data['Column'], missing_data['Missing_Percent'], color='lightcoral')
-        ax2.set_title('Missing Values Percentage', fontsize=14)
-        ax2.set_xlabel('Percentage Missing (%)')
+        ax2.barh(missing_data['Column'], missing_data['Missing_Percent'], color='lightcoral')
+        ax2.set_title('Missing Values Percentage')
         ax2.set_xlim(0, 100)
-        
-        # Add value annotations
-        for bar in bars1:
-            width = bar.get_width()
-            ax1.text(width, bar.get_y() + bar.get_height()/2., f'{int(width)}', 
-                    ha='left', va='center', fontsize=10)
-        
-        for bar in bars2:
-            width = bar.get_width()
-            ax2.text(width, bar.get_y() + bar.get_height()/2., f'{width:.1f}%', 
-                    ha='left', va='center', fontsize=10)
         
         plt.tight_layout()
         plt.show()
     
-    def _setup_correlation_controls(self, X: pd.DataFrame):
-        """Setup interactive controls for correlation analysis"""
-        numeric_cols = X.select_dtypes(include=['number']).columns.tolist()
+    def plot_correlations(self, X: pd.DataFrame, n_features: int = 10, method: str = 'pearson', threshold: float = 0.7, col_names: Optional[List[str]] = None):
+        """Plot correlation heatmap"""
+        logging.info("CORRELATION PLOT OPTIONS:")
+        logging.info("n_features: 5-20 or use 'all' for all columns")
+        logging.info("method: 'pearson', 'spearman'")
+        logging.info("threshold: 0.5-0.9 (suggested: 0.7)")
+        logging.info("col_names: list of column names or None for all numeric columns")
+        logging.info(f"Your choice: n_features={n_features}, method='{method}', threshold={threshold}, col_names={col_names}")
+        
+        if col_names is None:
+            numeric_cols = X.select_dtypes(include=['number']).columns.tolist()
+        else:
+            numeric_cols = [col for col in col_names if col in X.columns and pd.api.types.is_numeric_dtype(X[col])]
         
         if len(numeric_cols) < 2:
-            display(HTML("<p>Need at least 2 numeric columns for correlation analysis</p>"))
+            logging.info("Need at least 2 numeric columns for correlation analysis")
             return
         
-        # Controls
-        n_features = widgets.Dropdown(
-            options=[5, 10, 15, 20, 'All'],
-            value=15,
-            description='Top Features:',
-            style={'description_width': 'initial'}
-        )
-        
-        correlation_type = widgets.Dropdown(
-            options=['Pearson', 'Spearman'],
-            value='Pearson',
-            description='Method:',
-            style={'description_width': 'initial'}
-        )
-        
-        threshold = widgets.Dropdown(
-            options=[0.5, 0.6, 0.7, 0.8, 0.9],
-            value=0.7,
-            description='High Corr Threshold:',
-            style={'description_width': 'initial'}
-        )
-        
-        update_corr_btn = widgets.Button(description='Update Heatmap', button_style='primary')
-        output = widgets.Output()
-        
-        def on_update_clicked(b):
-            with output:
-                clear_output(wait=True)
-                n_feats = len(numeric_cols) if n_features.value == 'All' else n_features.value
-                method = correlation_type.value.lower()
-                self._plot_correlation_heatmap(X, n_feats, method, threshold.value)
-        
-        update_corr_btn.on_click(on_update_clicked)
-        
-        # Display controls
-        display(HTML("<h3>Feature Correlation Analysis</h3>"))
-        display(widgets.HBox([n_features, correlation_type, threshold]))
-        display(update_corr_btn)
-        display(output)
-        
-        # Initial plot
-        with output:
-            n_feats = len(numeric_cols) if n_features.value == 'All' else n_features.value
-            self._plot_correlation_heatmap(X, n_feats, correlation_type.value.lower(), threshold.value)
-        on_update_clicked(None)
-    
-    def _plot_correlation_heatmap(self, X: pd.DataFrame, n_features: int, method: str, threshold: float):
-        """Plot correlation heatmap for top features"""
-        numeric_cols = X.select_dtypes(include=['number']).columns.tolist()
-        
-        # Select top correlated features (based on variance or mutual correlations)
-        if n_features < len(numeric_cols):
-            # Use feature variance to select most informative features
+        # Select features
+        if n_features == 'all' or n_features >= len(numeric_cols):
+            selected_cols = numeric_cols
+        else:
             variances = X[numeric_cols].var().sort_values(ascending=False)
             selected_cols = variances.head(n_features).index.tolist()
-        else:
-            selected_cols = numeric_cols
         
         corr_matrix = X[selected_cols].corr(method=method)
         
         plt.figure(figsize=(12, 10))
         mask = np.triu(np.ones_like(corr_matrix, dtype=bool))
         
-        sns.heatmap(corr_matrix, 
-                   mask=mask,
-                   annot=True, 
-                   fmt='.2f', 
-                   cmap='RdBu_r', 
-                   center=0,
-                   square=True, 
-                   linewidths=0.5,
-                   cbar_kws={'shrink': 0.8})
-        
-        plt.title(f'Top {len(selected_cols)} Features Correlation Matrix ({method.capitalize()})', 
-                 fontsize=14, pad=20)
-        plt.xticks(rotation=45, ha='right')
-        plt.yticks(rotation=0)
+        sns.heatmap(corr_matrix, mask=mask, annot=True, fmt='.2f', cmap='RdBu_r', center=0)
+        plt.title(f'Correlation Matrix ({method.capitalize()})')
         plt.tight_layout()
         plt.show()
         
         # Show high correlations
         self._show_high_correlations(corr_matrix, threshold)
     
-    def _setup_target_controls(self, X: pd.DataFrame, y: pd.Series):
-        """Setup interactive controls for target analysis"""
-        numeric_cols = X.select_dtypes(include=['number']).columns.tolist()
+    def plot_target_relationships(self, X: pd.DataFrame, y: pd.Series, n_features: int = 10, plot_type: str = 'scatter', col_names: Optional[List[str]] = None):
+        """Plot relationships between features and target"""
+        logging.info("TARGET RELATIONSHIPS PLOT OPTIONS:")
+        logging.info("n_features: 5-15 (suggested: 10)")
+        logging.info("plot_type: 'scatter', 'boxplot', 'violin', 'stripplot'")
+        logging.info("col_names: list of column names or None for all numeric columns")
+        logging.info(f"Your choice: n_features={n_features}, plot_type='{plot_type}', col_names={col_names}")
+        
+        if col_names is None:
+            numeric_cols = X.select_dtypes(include=['number']).columns.tolist()
+        else:
+            numeric_cols = [col for col in col_names if col in X.columns and pd.api.types.is_numeric_dtype(X[col])]
         
         if not numeric_cols:
-            display(HTML("<p>No numeric features for target analysis</p>"))
+            logging.info("No numeric columns found")
             return
-        
-        # Create output widget FIRST
-        output = widgets.Output()
-        
-        # Controls
-        n_features = widgets.Dropdown(
-            options=[5, 10, 15, 20],
-            value=15,
-            description='Top Features:',
-            style={'description_width': 'initial'}
-        )
-        
-        plot_type = widgets.Dropdown(
-            options=['Scatter', 'Boxplot', 'Boxen', 'Violin', 'Stripplot'],
-            value='Scatter',
-            description='Plot Type:',
-            style={'description_width': 'initial'}
-        )
-        
-        update_tgt_btn = widgets.Button(description='Update Analysis', button_style='primary')
-        
-        def on_update_clicked(b):
-            with output:
-                clear_output(wait=True)
-                self._plot_target_relationships(X, y, n_features.value, plot_type.value)
-        
-        update_tgt_btn.on_click(on_update_clicked)
-        
-        # Display everything
-        display(HTML("<h3>Target Relationship Analysis</h3>"))
-        display(widgets.HBox([n_features, plot_type]))
-        display(update_tgt_btn)
-        display(output)
-        
-        # Trigger initial plot
-        on_update_clicked(None)
-
-    
-    def _plot_target_relationships(self, X: pd.DataFrame, y: pd.Series, n_features: int, plot_type: str):
-        """Plot relationships between features and target"""
-        numeric_cols = X.select_dtypes(include=['number']).columns.tolist()
         
         # Select top correlated features with target
         correlations = X[numeric_cols].corrwith(y).abs().sort_values(ascending=False)
         top_features = correlations.head(n_features).index.tolist()
         
-        ncols = 3
+        ncols = 2
         nrows = (len(top_features) + ncols - 1) // ncols
         
-        fig, axes = plt.subplots(nrows, ncols, figsize=(15, 4 * nrows))
+        fig, axes = plt.subplots(nrows, ncols, figsize=(5 * ncols, 4 * nrows))
         axes_flat = axes.flatten() if nrows * ncols > 1 else [axes]
         
         for i, col in enumerate(top_features):
             if i < len(axes_flat):
                 ax = axes_flat[i]
                 
-                if plot_type == 'Scatter':
+                if plot_type == 'scatter':
                     ax.scatter(X[col], y, alpha=0.5, s=20)
                     ax.set_xlabel(col)
                     ax.set_ylabel('Target')
-                elif plot_type in ['Boxplot', 'Boxen', 'Violin', 'Stripplot']:
+                elif plot_type == 'boxplot':
                     plot_data = pd.DataFrame({col: X[col], 'Target': y})
-                    if pd.api.types.is_numeric_dtype(y) and y.nunique() > 10:
-                        # Bin target for categorical plots
-                        plot_data['Target_Bin'] = pd.cut(y, bins=5)
-                        x_var = 'Target_Bin'
-                    else:
-                        x_var = 'Target'
-                    
-                    if plot_type == 'Boxplot':
-                        sns.boxplot(data=plot_data, x=x_var, y=col, ax=ax)
-                    elif plot_type == 'Boxen':
-                        sns.boxenplot(data=plot_data, x=x_var, y=col, ax=ax)
-                    elif plot_type == 'Violin':
-                        sns.violinplot(data=plot_data, x=x_var, y=col, ax=ax)
-                    elif plot_type == 'Stripplot':
-                        sns.stripplot(data=plot_data, x=x_var, y=col, ax=ax, alpha=0.6, size=3)
+                    sns.boxplot(data=plot_data, x='Target', y=col, ax=ax)
                 
                 corr = correlations[col]
-                ax.set_title(f'{col}\n(corr: {corr:.3f})', fontsize=11)
-                ax.tick_params(labelsize=9)
+                ax.set_title(f'{col}\n(corr: {corr:.3f})')
         
         # Hide empty subplots
         for i in range(len(top_features), len(axes_flat)):
@@ -680,8 +475,9 @@ class DataPlotter:
                 })
         
         if high_corr_pairs:
+            logging.info(f"High correlations (> {threshold}):")
             high_corr_df = pd.DataFrame(high_corr_pairs)
-            display(HTML(f"<h4>High Correlations (>{threshold}):</h4>"))
-            display(high_corr_df)
+            print(high_corr_df.to_string(index=False))
         else:
-            display(HTML(f"<p>No correlations above {threshold} found</p>"))
+            logging.info(f"No correlations above {threshold} found")
+
