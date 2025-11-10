@@ -217,16 +217,6 @@ class DataPlotter:
             tab.set_title(i, title)
         return tab, children
     
-    def _get_grid_layout(self, nrows, ncols, n_items):
-        """Calculate optimal grid layout for subplots"""
-        if nrows is None and ncols is None:
-            ncols = 4
-            nrows = (n_items + ncols - 1) // ncols
-        elif nrows is None:
-            nrows = (n_items + ncols - 1) // ncols
-        elif ncols is None:
-            ncols = (n_items + nrows - 1) // nrows
-        return nrows, ncols
     
     def interactive_eda(self, X: pd.DataFrame, y: Optional[pd.Series] = None):
         """
