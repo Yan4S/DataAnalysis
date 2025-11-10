@@ -309,7 +309,7 @@ class DataPlotter:
         
         def on_update_clicked(b):
             with output:
-                clear_output()
+                clear_output(wait=True)
                 self._plot_numeric_features(X, plot_type.value, columns_per_row.value)
         
         update_btn.on_click(on_update_clicked)
@@ -387,7 +387,7 @@ class DataPlotter:
         
         def on_update_clicked(b):
             with output:
-                clear_output()
+                clear_output(wait=True)
                 self._plot_categorical_features(X, max_categories.value, columns_per_row.value)
         
         update_btn.on_click(on_update_clicked)
@@ -512,7 +512,7 @@ class DataPlotter:
         
         def on_update_clicked(b):
             with output:
-                clear_output()
+                clear_output(wait=True)
                 n_feats = len(numeric_cols) if n_features.value == 'All' else n_features.value
                 method = correlation_type.value.lower()
                 self._plot_correlation_heatmap(X, n_feats, method, threshold.value)
@@ -595,7 +595,7 @@ class DataPlotter:
         
         def on_update_clicked(b):
             with output:
-                clear_output()
+                clear_output(wait=True)
                 self._plot_target_relationships(X, y, n_features.value, plot_type.value)
         
         update_btn.on_click(on_update_clicked)
