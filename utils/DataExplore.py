@@ -248,7 +248,7 @@ class DataPlotter:
         logging.info("TIP: Call any plotting function to see its specific options!")
         logging.info("=" * 50)
     
-    def plot_numeric_features(self, X: pd.DataFrame, plot_type: str = 'histogram', ncols: int = 3, col_names: Optional[List[str]] = None):
+    def plot_numeric_features(self, X: pd.DataFrame, plot_type: str = 'histogram', ncols: int = 5, col_names: Optional[List[str]] = None):
         """Plot numeric features with specified type"""
         logging.info("NUMERIC FEATURES PLOT OPTIONS:")
         logging.info("plot_type: 'histogram', 'boxplot', 'density', 'violin'")
@@ -295,7 +295,7 @@ class DataPlotter:
         plt.tight_layout()
         plt.show()
     
-    def plot_categorical_features(self, X: pd.DataFrame, max_categories: int = 10, ncols: int = 2, col_names: Optional[List[str]] = None):
+    def plot_categorical_features(self, X: pd.DataFrame, max_categories: int = 10, ncols: int = 5, col_names: Optional[List[str]] = None):
         """Plot categorical features"""
         logging.info("CATEGORICAL FEATURES PLOT OPTIONS:")
         logging.info("max_categories: 5-20 (suggested: 10)")
