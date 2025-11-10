@@ -26,6 +26,44 @@ def typeConversion(_df, convert_to_cat, convert_to_num):
             df[col] = df[col].astype('category').cat.codes
     
     return df
+
+def plot_missing_values(X: pd.DataFrame, col_names: Optional[List[str]] = None):
+    """Plot missing values"""
+    logging.info("MISSING VALUES PLOT:")
+    logging.info("col_names: list of column names or None for all columns")
+    logging.info(f"Your choice: col_names={col_names}")
+    
+    if col_names is None:
+        data_to_plot = X
+    else:
+        data_to_plot = X[col_names]
+    
+    missing_count = data_to_plot.isnull().sum()
+    missing_pct = (missing_count / len(data_to_plot)) * 100
+    missing_data = pd.DataFrame({
+        'Column': missing_count.index,
+        'Missing_Count': missing_count.values,
+        'Missing_Percent': missing_pct.values
+    }).sort_values('Missing_Percent', ascending=False)
+    missing_data = missing_data[missing_data['Missing_Count'] > 0]
+    
+    if missing_data.empty:
+        logging.info("No missing values found")
+        return
+    
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
+    
+    # Count plot
+    ax1.barh(missing_data['Column'], missing_data['Missing_Count'], color='salmon')
+    ax1.set_title('Missing Values Count')
+    
+    # Percentage plot
+    ax2.barh(missing_data['Column'], missing_data['Missing_Percent'], color='lightcoral')
+    ax2.set_title('Missing Values Percentage')
+    ax2.set_xlim(0, 100)
+    
+    plt.tight_layout()
+    plt.show()
     
 class FeatureTypeAnalyzer:
     def __init__(self):
@@ -411,7 +449,7 @@ class DataPlotter:
         # Show high correlations
         self._show_high_correlations(corr_matrix, threshold)
     
-    def plot_target_relationships(self, X: pd.DataFrame, y: pd.Series, n_features: int = 10, plot_type: str = 'scatter', col_names: Optional[List[str]] = None):
+    def plot_target_relationships(X: pd.DataFrame, y: pd.Series, n_features: int = 10, plot_type: str = 'scatter', col_names: Optional[List[str]] = None):
         """Plot relationships between features and target"""
         logging.info("TARGET RELATIONSHIPS PLOT OPTIONS:")
         logging.info("n_features: 5-15 (suggested: 10)")
