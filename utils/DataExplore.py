@@ -235,12 +235,12 @@ class DataPlotter:
         
         # Tab 2: Numeric Features with controls
         with outputs[1]:
-            clear_output()
+            clear_output(wait=True)
             self._setup_numeric_controls(X)
         
         # Tab 3: Categorical Features with controls  
         with outputs[2]:
-            clear_output()
+            clear_output(wait=True)
             self._setup_categorical_controls(X)
         
         # Tab 4: Missing Data
@@ -250,12 +250,12 @@ class DataPlotter:
         
         # Tab 5: Correlations with controls
         with outputs[4]:
-            clear_output()
+            clear_output(wait=True)
             self._setup_correlation_controls(X)
         
         # Tab 6: Target Analysis with controls
         with outputs[5]:
-            clear_output()
+            clear_output(wait=True)
             if y is not None:
                 self._setup_target_controls(X, y)
             else:
