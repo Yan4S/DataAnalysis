@@ -210,7 +210,7 @@ class FeatureTypeAnalyzer:
 
 
 
-class SimpleDataPlotter:
+class DataPlotter:
     """
     Simple plotting class - you control all parameters directly
     """
