@@ -414,7 +414,7 @@ class DataPlotter:
     
     def _plot_categorical_features(self, X: pd.DataFrame, max_cats: int, ncols: int):
         """Plot categorical features"""
-        categorical_cols = X.select_dtypes(include=['object', 'category']).columns.tolist()
+        categorical_cols = X.select_dtypes(exclude=np.number).columns.tolist()
         n_features = len(categorical_cols)
         nrows = (n_features + ncols - 1) // ncols
         
@@ -498,7 +498,7 @@ class DataPlotter:
         # Controls
         n_features = widgets.Dropdown(
             options=[5, 10, 15, 20, 'All'],
-            value=10,
+            value=15,
             description='Top Features:',
             style={'description_width': 'initial'}
         )
@@ -588,7 +588,7 @@ class DataPlotter:
         # Controls
         n_features = widgets.Dropdown(
             options=[5, 10, 15, 20],
-            value=10,
+            value=15,
             description='Top Features:',
             style={'description_width': 'initial'}
         )
